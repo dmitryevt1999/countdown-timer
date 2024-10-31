@@ -121,48 +121,95 @@
             }
         }
 
-        // Сохранение состояния чекбоксов в Firebase
-        function saveCheckboxState(id) {
-            const checkbox = document.getElementById(id);
-            database.ref(`checkboxStates/${id}`).set(checkbox.checked);
-            checkbox.classList.toggle("strikethrough", checkbox.checked);
+        // Сохранение состояния чекбоксов
+        function saveCheckboxState(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            const state = checkbox.checked;
+            localStorage.setItem(checkboxId, state);
+            if (state) {
+                document.getElementById(checkboxId).parentElement.classList.add("strikethrough");
+            } else {
+                document.getElementById(checkboxId).parentElement.classList.remove("strikethrough");
+            }
         }
 
-        // Загрузка состояния чекбокса из Firebase
+        // Загрузка состояния чекбоксов
         function loadCheckboxState(checkboxId) {
-            database.ref(`checkboxStates/${checkboxId}`).once('value').then((snapshot) => {
-                const checked = snapshot.val() || false; // значение по умолчанию false
-                document.getElementById(checkboxId).checked = checked;
-                document.getElementById(checkboxId).classList.toggle("strikethrough", checked);
-            });
+            const state = localStorage.getItem(checkboxId) === 'true';
+            const checkbox = document.getElementById(checkboxId);
+            checkbox.checked = state;
+            if (state) {
+                checkbox.parentElement.classList.add("strikethrough");
+            }
         }
 
-        // Функция для добавления новой задачи
+        // Добавление задачи
         function addTask() {
             const taskInput = document.getElementById("taskInput");
             const taskValue = taskInput.value;
             if (taskValue) {
-                const newTaskRef = database.ref("tasks").push();
-                newTaskRef.set({
-                    name: taskValue,
-                    completed: false
-                });
-                taskInput.value = "";
+                const tasksList = document.getElementById("tasksList");
+                const li = document.createElement("li");
+                li.textContent = taskValue;
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.onchange = function () {
+                    li.classList.toggle("strikethrough");
+                    saveTaskState(taskValue, checkbox.checked);
+                };
+
+                li.prepend(checkbox);
+                tasksList.appendChild(li);
+
+                taskInput.value = ""; // Очищаем поле ввода
+                saveTasks();
             }
         }
 
-        // Загрузка задач из Firebase
-        function loadTasks() {
-            database.ref("tasks").on('value', (snapshot) => {
-                const tasks = snapshot.val();
-                const tasksList = document.getElementById("tasksList");
-                tasksList.innerHTML = "";
-                for (const key in tasks) {
-                    const taskItem = document.createElement("li");
-                    taskItem.textContent = tasks[key].name;
-                    tasksList.appendChild(taskItem);
-                }
+        // Сохранение задач
+        function saveTasks() {
+            const tasksList = document.getElementById("tasksList");
+            const tasks = [];
+            tasksList.querySelectorAll("li").forEach(li => {
+                tasks.push({ task: li.textContent, completed: li.querySelector("input[type='checkbox']").checked });
             });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        // Загрузка задач
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const tasksList = document.getElementById("tasksList");
+            tasksList.innerHTML = ""; // Очищаем список перед загрузкой
+            tasks.forEach(({ task, completed }) => {
+                const li = document.createElement("li");
+                li.textContent = task;
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = completed;
+                checkbox.onchange = function () {
+                    li.classList.toggle("strikethrough");
+                    saveTaskState(task, checkbox.checked);
+                };
+
+                li.prepend(checkbox);
+                if (completed) {
+                    li.classList.add("strikethrough");
+                }
+                tasksList.appendChild(li);
+            });
+        }
+
+        // Сохранение состояния задачи
+        function saveTaskState(task, completed) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const taskIndex = tasks.findIndex(t => t.task === task);
+            if (taskIndex !== -1) {
+                tasks[taskIndex].completed = completed;
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+            }
         }
     </script>
 </body>
