@@ -3,56 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обратный отсчет до 30 ноября</title>
+    <title>Обратный отсчет</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            color: #333;
         }
-        #countdown {
-            font-size: 2rem;
+        .countdown {
             text-align: center;
+            margin: 20px 0;
+        }
+        .title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .time {
+            font-size: 2rem;
+        }
+        .small-countdown .title {
+            font-size: 1.2rem;
+        }
+        .small-countdown .time {
+            font-size: 1.5rem;
         }
     </style>
 </head>
 <body>
-    <div id="countdown">Загрузка...</div>
+
+    <div class="countdown">
+        <div class="title">До встречи осталось:</div>
+        <div id="countdown1" class="time">Загрузка...</div>
+    </div>
+
+    <div class="countdown small-countdown">
+        <div class="title">До покупки билетов:</div>
+        <div id="countdown2" class="time">Загрузка...</div>
+    </div>
 
     <script>
-        // Устанавливаем дату окончания
-        const endDate = new Date('November 30, 2024 23:59:59').getTime();
+        // Устанавливаем даты окончания
+        const endDate1 = new Date('November 30, 2024 23:59:59').getTime();
+        const endDate2 = new Date('December 5, 2024 23:59:59').getTime();
 
-        function updateCountdown() {
+        function updateCountdown(endDate, elementId) {
             const now = new Date().getTime();
             const timeRemaining = endDate - now;
 
-            // Расчёт дней, часов, минут и секунд
             const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
             const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
-            // Обновление содержимого
-            document.getElementById('countdown').innerHTML = `
-                До 30 ноября осталось:<br>
-                ${days} дней ${hours} часов ${minutes} минут ${seconds} секунд
+            document.getElementById(elementId).innerHTML = `
+                ${days} дн ${hours} ч ${minutes} мин ${seconds} сек
             `;
 
-            // Если время истекло
             if (timeRemaining < 0) {
-                document.getElementById('countdown').innerHTML = "Время истекло!";
-                clearInterval(interval);
+                document.getElementById(elementId).innerHTML = "Время истекло!";
+                clearInterval(countdownIntervals[elementId]);
             }
         }
 
-        // Обновляем каждую секунду
-        const interval = setInterval(updateCountdown, 1000);
+        // Запускаем два таймера для каждого отсчета
+        const countdownIntervals = {
+            countdown1: setInterval(() => updateCountdown(endDate1, 'countdown1'), 1000),
+            countdown2: setInterval(() => updateCountdown(endDate2, 'countdown2'), 1000),
+        };
     </script>
+
 </body>
 </html>
