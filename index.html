@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer</title>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js"></script>
     <style>
         body {
             background-color: black;
@@ -15,10 +12,10 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Центрируем по горизонтали */
-            justify-content: center; /* Центрируем по вертикали */
-            min-height: 100vh; /* Занимает 100% высоты окна */
-            margin: 0; /* Убираем отступы */
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
         }
         .countdown {
             font-size: 24px;
@@ -34,10 +31,6 @@
         .subtask {
             font-size: 14px;
             color: lightgray;
-        }
-        input[type="text"] {
-            width: 300px;
-            margin: 10px 0;
         }
     </style>
 </head>
@@ -58,40 +51,7 @@
     <div class="countdown" id="countdownTicketFromVN">00:00:00</div>
     <input type="checkbox" id="checkTicketFromVN" onchange="saveCheckboxState('checkTicketFromVN')"> Завершено
 
-    <h2>Добавить новую задачу:</h2>
-    <input type="text" id="taskInput" placeholder="Введите новую задачу">
-    <button onclick="addTask()">Добавить задачу</button>
-
-    <h2>Список задач:</h2>
-    <ul id="tasksList"></ul>
-
     <script>
-        // Ваша конфигурация Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAjNl_Gd32-34qamgfVctFqNSzZa8QbAyM",
-            authDomain: "xrysriki.firebaseapp.com",
-            databaseURL: "https://xrysriki-default-rtdb.firebaseio.com",
-            projectId: "xrysriki",
-            storageBucket: "xrysriki.firebasestorage.app",
-            messagingSenderId: "724701954108",
-            appId: "1:724701954108:web:9c275e4e6806d066df4339",
-            measurementId: "G-FG4NZ3379D"
-        };
-
-        // Инициализация Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Загрузка состояния при загрузке страницы
-        document.addEventListener("DOMContentLoaded", () => {
-            loadCheckboxState("checkMeeting");
-            loadCheckboxState("checkTicket");
-            loadCheckboxState("checkSDEK");
-            loadCheckboxState("checkTicketFromVN");
-            startCountdowns();
-            loadTasks();
-        });
-
         // Функция запуска отсчетов
         function startCountdowns() {
             const meetingDate = new Date("2024-11-30T00:00:00").getTime();
@@ -127,9 +87,9 @@
             const state = checkbox.checked;
             localStorage.setItem(checkboxId, state);
             if (state) {
-                document.getElementById(checkboxId).parentElement.classList.add("strikethrough");
+                checkbox.parentElement.classList.add("strikethrough");
             } else {
-                document.getElementById(checkboxId).parentElement.classList.remove("strikethrough");
+                checkbox.parentElement.classList.remove("strikethrough");
             }
         }
 
@@ -143,74 +103,14 @@
             }
         }
 
-        // Добавление задачи
-        function addTask() {
-            const taskInput = document.getElementById("taskInput");
-            const taskValue = taskInput.value;
-            if (taskValue) {
-                const tasksList = document.getElementById("tasksList");
-                const li = document.createElement("li");
-                li.textContent = taskValue;
-
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.onchange = function () {
-                    li.classList.toggle("strikethrough");
-                    saveTaskState(taskValue, checkbox.checked);
-                };
-
-                li.prepend(checkbox);
-                tasksList.appendChild(li);
-
-                taskInput.value = ""; // Очищаем поле ввода
-                saveTasks();
-            }
-        }
-
-        // Сохранение задач
-        function saveTasks() {
-            const tasksList = document.getElementById("tasksList");
-            const tasks = [];
-            tasksList.querySelectorAll("li").forEach(li => {
-                tasks.push({ task: li.textContent, completed: li.querySelector("input[type='checkbox']").checked });
-            });
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-        }
-
-        // Загрузка задач
-        function loadTasks() {
-            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-            const tasksList = document.getElementById("tasksList");
-            tasksList.innerHTML = ""; // Очищаем список перед загрузкой
-            tasks.forEach(({ task, completed }) => {
-                const li = document.createElement("li");
-                li.textContent = task;
-
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.checked = completed;
-                checkbox.onchange = function () {
-                    li.classList.toggle("strikethrough");
-                    saveTaskState(task, checkbox.checked);
-                };
-
-                li.prepend(checkbox);
-                if (completed) {
-                    li.classList.add("strikethrough");
-                }
-                tasksList.appendChild(li);
-            });
-        }
-
-        // Сохранение состояния задачи
-        function saveTaskState(task, completed) {
-            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-            const taskIndex = tasks.findIndex(t => t.task === task);
-            if (taskIndex !== -1) {
-                tasks[taskIndex].completed = completed;
-                localStorage.setItem("tasks", JSON.stringify(tasks));
-            }
-        }
+        // Загрузка состояния чекбоксов при загрузке страницы
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCheckboxState("checkMeeting");
+            loadCheckboxState("checkTicket");
+            loadCheckboxState("checkSDEK");
+            loadCheckboxState("checkTicketFromVN");
+            startCountdowns();
+        });
     </script>
 </body>
 </html>
