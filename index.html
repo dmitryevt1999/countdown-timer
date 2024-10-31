@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обратный отсчет до 30 ноября</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        #countdown {
+            font-size: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown">Загрузка...</div>
+
+    <script>
+        // Устанавливаем дату окончания
+        const endDate = new Date('November 30, 2024 23:59:59').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeRemaining = endDate - now;
+
+            // Расчёт дней, часов, минут и секунд
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            // Обновление содержимого
+            document.getElementById('countdown').innerHTML = `
+                До 30 ноября осталось:<br>
+                ${days} дней ${hours} часов ${minutes} минут ${seconds} секунд
+            `;
+
+            // Если время истекло
+            if (timeRemaining < 0) {
+                document.getElementById('countdown').innerHTML = "Время истекло!";
+                clearInterval(interval);
+            }
+        }
+
+        // Обновляем каждую секунду
+        const interval = setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
