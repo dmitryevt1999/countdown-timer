@@ -85,7 +85,7 @@
     }
 
     // Функция для вычисления времени до события
-    function calculateCountdown(endTime, elementId) {
+    function calculateCountdown(endTime, elementId, completed) {
         const now = new Date().getTime();
         const distance = endTime - now;
 
@@ -95,7 +95,9 @@
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         const countdownElement = document.getElementById(elementId);
-        if (distance < 0) {
+        if (completed) {
+            countdownElement.innerHTML = "Задача выполнена!";
+        } else if (distance < 0) {
             countdownElement.innerHTML = "Время вышло!";
         } else {
             countdownElement.innerHTML = days + " дней " + hours + " часов "
@@ -111,11 +113,18 @@
         const endTime4 = new Date("2024-11-28T00:00:00").getTime();
         const endTime5 = new Date("2024-11-03T00:00:00").getTime();
 
-        calculateCountdown(endTime1, "countdown-1");
-        calculateCountdown(endTime2, "countdown-2");
-        calculateCountdown(endTime3, "countdown-3");
-        calculateCountdown(endTime4, "countdown-4");
-        calculateCountdown(endTime5, "countdown-5");
+        const completedTasks = [
+            localStorage.getItem("task-1") === 'true',
+            localStorage.getItem("task-2") === 'true',
+            localStorage.getItem("task-3") === 'true',
+            localStorage.getItem("task-4") === 'true',
+        ];
+
+        calculateCountdown(endTime1, "countdown-1", false);
+        calculateCountdown(endTime2, "countdown-2", completedTasks[0]);
+        calculateCountdown(endTime3, "countdown-3", completedTasks[1]);
+        calculateCountdown(endTime4, "countdown-4", completedTasks[2]);
+        calculateCountdown(endTime5, "countdown-5", completedTasks[3]);
     }, 1000);
 
     // Функция для обработки завершения задачи
@@ -126,10 +135,12 @@
             taskText.classList.add('completed');
             countdownText.classList.add('completed');
             countdownText.innerHTML = "Задача выполнена!";
+            localStorage.setItem(checkbox.id, 'true'); // Сохранение состояния в локальное хранилище
         } else {
             taskText.classList.remove('completed');
             countdownText.classList.remove('completed');
             countdownText.innerHTML = ""; // Очищаем текст при снятии галочки
+            localStorage.setItem(checkbox.id, 'false'); // Обновление состояния в локальном хранилище
         }
         saveCheckboxState(); // Сохраняем состояние чекбоксов
     }
