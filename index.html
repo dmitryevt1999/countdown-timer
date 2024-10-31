@@ -12,9 +12,11 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
+            text-align: center;
         }
         .countdown {
             font-size: 24px;
+            margin: 10px 0;
         }
         .strikethrough {
             text-decoration: line-through;
@@ -26,6 +28,10 @@
         .subtask {
             font-size: 14px;
             color: lightgray;
+        }
+        input[type="text"] {
+            width: 300px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -41,6 +47,17 @@
     <h1 class="subtask">Подзадача: Отправка SDEK:</h1>
     <div class="countdown" id="countdownSDEK">00:00:00</div>
     <input type="checkbox" id="checkSDEK" onchange="saveCheckboxState('checkSDEK')"> Завершено
+
+    <h1 class="subtask">Подзадача: Билет из Великого Новгорода в Питер:</h1>
+    <div class="countdown" id="countdownTicketFromVN">00:00:00</div>
+    <input type="checkbox" id="checkTicketFromVN" onchange="saveCheckboxState('checkTicketFromVN')"> Завершено
+
+    <h2>Добавить новую задачу:</h2>
+    <input type="text" id="taskInput" placeholder="Введите новую задачу">
+    <button onclick="addTask()">Добавить задачу</button>
+
+    <h2>Список задач:</h2>
+    <ul id="tasksList"></ul>
 
     <script>
         // Ваша конфигурация Firebase
@@ -64,7 +81,9 @@
             loadCheckboxState("checkMeeting");
             loadCheckboxState("checkTicket");
             loadCheckboxState("checkSDEK");
+            loadCheckboxState("checkTicketFromVN");
             startCountdowns();
+            loadTasks();
         });
 
         // Функция запуска отсчетов
@@ -72,10 +91,12 @@
             const meetingDate = new Date("2024-11-30T00:00:00").getTime();
             const ticketDate = new Date("2024-11-05T00:00:00").getTime();
             const sdekDate = new Date("2024-11-28T00:00:00").getTime();
+            const ticketFromVNDate = new Date("2024-11-10T00:00:00").getTime(); // Примерная дата
 
             setInterval(() => updateCountdown(meetingDate, "countdownMeeting"), 1000);
             setInterval(() => updateCountdown(ticketDate, "countdownTicket"), 1000);
             setInterval(() => updateCountdown(sdekDate, "countdownSDEK"), 1000);
+            setInterval(() => updateCountdown(ticketFromVNDate, "countdownTicketFromVN"), 1000);
         }
 
         // Обновление отсчета
@@ -107,6 +128,34 @@
                 const checked = snapshot.val() || false; // значение по умолчанию false
                 document.getElementById(checkboxId).checked = checked;
                 document.getElementById(checkboxId).classList.toggle("strikethrough", checked);
+            });
+        }
+
+        // Функция для добавления новой задачи
+        function addTask() {
+            const taskInput = document.getElementById("taskInput");
+            const taskValue = taskInput.value;
+            if (taskValue) {
+                const newTaskRef = database.ref("tasks").push();
+                newTaskRef.set({
+                    name: taskValue,
+                    completed: false
+                });
+                taskInput.value = "";
+            }
+        }
+
+        // Загрузка задач из Firebase
+        function loadTasks() {
+            database.ref("tasks").on('value', (snapshot) => {
+                const tasks = snapshot.val();
+                const tasksList = document.getElementById("tasksList");
+                tasksList.innerHTML = "";
+                for (const key in tasks) {
+                    const taskItem = document.createElement("li");
+                    taskItem.textContent = tasks[key].name;
+                    tasksList.appendChild(taskItem);
+                }
             });
         }
     </script>
