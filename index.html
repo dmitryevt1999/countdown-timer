@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Обратный отсчет</title>
     <style>
-        /* Основные стили для фона и текста */
         body {
             font-family: Arial, sans-serif;
             background-color: #000;
@@ -18,7 +17,6 @@
             margin: 0;
             padding: 0;
         }
-        /* Общий стиль для блоков отсчета */
         .countdown {
             text-align: center;
             margin: 20px 0;
@@ -29,27 +27,17 @@
             width: 90%;
             max-width: 500px;
         }
-        /* Стиль заголовков */
         .title {
             font-size: 1.6rem;
             font-weight: bold;
             margin-bottom: 10px;
             text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3);
         }
-        /* Основной стиль текста отсчета */
         .time {
             font-size: 2.5rem;
             font-weight: bold;
             text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
             color: #00ffcc;
-        }
-        .small-countdown .title {
-            font-size: 1.4rem;
-        }
-        .small-countdown .time {
-            font-size: 2rem;
-            color: #ffcc00;
-            transition: color 0.3s, text-decoration 0.3s;
         }
         .strikethrough {
             text-decoration: line-through;
@@ -73,21 +61,22 @@
 <body>
 
     <div class="countdown">
-        <div class="title">До встречи осталось:</div>
-        <div id="countdown1" class="time">Загрузка...</div>
-    </div>
-
-    <div class="countdown small-countdown">
         <div class="title">До покупки билетов:</div>
-        <div id="countdown2" class="time">5 дней</div>
+        <div id="countdown2" class="time">Загрузка...</div>
         <div class="checkbox-container">
             <input type="checkbox" id="checkPurchase" class="checkbox">
             <label for="checkPurchase">Задача выполнена</label>
         </div>
     </div>
 
+    <div class="countdown">
+        <div class="title">До встречи осталось:</div>
+        <div id="countdown1" class="time">Загрузка...</div>
+    </div>
+
     <script>
-        const endDate1 = new Date('November 30, 2024 23:59:59').getTime();
+        const endDate2 = new Date('November 5, 2024 23:59:59').getTime(); // Дата окончания для второго отсчета
+        const endDate1 = new Date('November 30, 2024 23:59:59').getTime(); // Дата окончания для первого отсчета
 
         function updateCountdown(endDate, elementId) {
             const now = new Date().getTime();
@@ -110,18 +99,20 @@
 
         const countdownIntervals = {
             countdown1: setInterval(() => updateCountdown(endDate1, 'countdown1'), 1000),
+            countdown2: setInterval(() => updateCountdown(endDate2, 'countdown2'), 1000),
         };
 
         const checkPurchase = document.getElementById('checkPurchase');
-        const countdown2 = document.getElementById('countdown2');
 
         checkPurchase.addEventListener('change', () => {
             if (checkPurchase.checked) {
-                countdown2.classList.add('strikethrough');
-                countdown2.innerHTML = 'Задача выполнена';
+                document.getElementById('countdown2').classList.add('strikethrough');
+                document.getElementById('countdown2').innerHTML = 'Задача выполнена';
+                clearInterval(countdownIntervals['countdown2']);
             } else {
-                countdown2.classList.remove('strikethrough');
-                countdown2.innerHTML = '5 дней';
+                document.getElementById('countdown2').classList.remove('strikethrough');
+                updateCountdown(endDate2, 'countdown2');
+                countdownIntervals['countdown2'] = setInterval(() => updateCountdown(endDate2, 'countdown2'), 1000);
             }
         });
     </script>
