@@ -10,125 +10,97 @@
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
+            padding: 20px;
         }
         .countdown {
             font-size: 24px;
-            margin: 10px 0;
-        }
-        .strikethrough {
-            text-decoration: line-through;
-            color: gray;
+            margin: 20px 0;
         }
         .task {
-            font-size: 18px;
+            margin: 10px 0;
         }
-        .subtask {
-            font-size: 14px;
-            color: lightgray;
+        .checkbox {
+            margin-right: 10px;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: gray;
         }
     </style>
 </head>
 <body>
-    <h1>Отсчет до встречи:</h1>
-    <div class="countdown" id="countdownMeeting">00:00:00</div>
-    <input type="checkbox" id="checkMeeting" onchange="saveCheckboxState('checkMeeting')"> Завершено
 
-    <h1 class="subtask">Подзадача: До покупки билетов осталось:</h1>
-    <div class="countdown" id="countdownTicket">00:00:00</div>
-    <input type="checkbox" id="checkTicket" onchange="saveCheckboxState('checkTicket')"> Завершено
+<h1>Отсчет до встречи</h1>
+<div id="countdown-1" class="countdown"></div>
 
-    <h1 class="subtask">Подзадача: Отправка SDEK:</h1>
-    <div class="countdown" id="countdownSDEK">00:00:00</div>
-    <input type="checkbox" id="checkSDEK" onchange="saveCheckboxState('checkSDEK')"> Завершено
+<h2>Подзадачи</h2>
+<div class="task">
+    <input type="checkbox" class="checkbox" id="task-1" onchange="toggleTask(this, 'task-1-text')">
+    <span id="task-1-text">Отправка СДЭК до 29 ноября</span>
+    <div id="countdown-2" class="countdown"></div>
+</div>
+<div class="task">
+    <input type="checkbox" class="checkbox" id="task-2" onchange="toggleTask(this, 'task-2-text')">
+    <span id="task-2-text">Сбор вещей до 28 ноября</span>
+    <div id="countdown-3" class="countdown"></div>
+</div>
+<div class="task">
+    <input type="checkbox" class="checkbox" id="task-3" onchange="toggleTask(this, 'task-3-text')">
+    <span id="task-3-text">Покупка билета до 5 ноября</span>
+    <div id="countdown-4" class="countdown"></div>
+</div>
+<div class="task">
+    <input type="checkbox" class="checkbox" id="task-4" onchange="toggleTask(this, 'task-4-text')">
+    <span id="task-4-text">Купить чемодан до 3 ноября</span>
+    <div id="countdown-5" class="countdown"></div>
+</div>
 
-    <h1 class="subtask">Подзадача: Сбор вещей:</h1>
-    <div class="countdown" id="countdownPacking">00:00:00</div>
-    <input type="checkbox" id="checkPacking" onchange="saveCheckboxState('checkPacking')"> Завершено
+<script>
+    // Функция для вычисления времени до события
+    function calculateCountdown(endTime, elementId) {
+        const now = new Date().getTime();
+        const distance = endTime - now;
 
-    <h1 class="subtask">Подзадача: Купить билет в Питер:</h1>
-    <div class="countdown" id="countdownTicketFromVN">00:00:00</div>
-    <input type="checkbox" id="checkTicketFromVN" onchange="saveCheckboxState('checkTicketFromVN')"> Завершено
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    <h1 class="subtask">Подзадача: Купить чемодан:</h1>
-    <div class="countdown" id="countdownBuySuitcase">00:00:00</div>
-    <input type="checkbox" id="checkBuySuitcase" onchange="saveCheckboxState('checkBuySuitcase')"> Завершено
-
-    <script>
-        // Функция запуска отсчетов
-        function startCountdowns() {
-            const meetingDate = new Date("2024-11-30T00:00:00").getTime();
-            const ticketDate = new Date("2024-11-05T00:00:00").getTime();
-            const sdekDate = new Date("2024-11-29T00:00:00").getTime();
-            const packingDate = new Date("2024-11-28T00:00:00").getTime();
-            const ticketFromVNDate = new Date("2024-11-10T00:00:00").getTime(); // Примерная дата
-            const buySuitcaseDate = new Date("2024-11-02T00:00:00").getTime(); // Примерная дата
-
-            setInterval(() => updateCountdown(meetingDate, "countdownMeeting"), 1000);
-            setInterval(() => updateCountdown(ticketDate, "countdownTicket"), 1000);
-            setInterval(() => updateCountdown(sdekDate, "countdownSDEK"), 1000);
-            setInterval(() => updateCountdown(packingDate, "countdownPacking"), 1000);
-            setInterval(() => updateCountdown(ticketFromVNDate, "countdownTicketFromVN"), 1000);
-            setInterval(() => updateCountdown(buySuitcaseDate, "countdownBuySuitcase"), 1000);
+        const countdownElement = document.getElementById(elementId);
+        if (distance < 0) {
+            countdownElement.innerHTML = "Время вышло!";
+        } else {
+            countdownElement.innerHTML = days + " дней " + hours + " часов "
+                + minutes + " минут " + seconds + " секунд ";
         }
+    }
 
-        // Обновление отсчета
-        function updateCountdown(targetDate, elementId) {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+    // Обновление таймера
+    setInterval(() => {
+        const now = new Date();
+        const endTime1 = new Date("2024-11-30T00:00:00").getTime();
+        const endTime2 = new Date("2024-11-05T00:00:00").getTime();
+        const endTime3 = new Date("2024-11-29T00:00:00").getTime();
+        const endTime4 = new Date("2024-11-28T00:00:00").getTime();
+        const endTime5 = new Date("2024-11-03T00:00:00").getTime();
 
-            if (distance < 0) {
-                document.getElementById(elementId).innerHTML = "Время вышло";
-                return;
-            }
+        calculateCountdown(endTime1, "countdown-1");
+        calculateCountdown(endTime2, "countdown-2");
+        calculateCountdown(endTime3, "countdown-3");
+        calculateCountdown(endTime4, "countdown-4");
+        calculateCountdown(endTime5, "countdown-5");
+    }, 1000);
 
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById(elementId).innerHTML = `${hours}ч ${minutes}м ${seconds}с`;
+    // Функция для обработки завершения задачи
+    function toggleTask(checkbox, taskId) {
+        const taskText = document.getElementById(taskId);
+        if (checkbox.checked) {
+            taskText.classList.add('completed');
+        } else {
+            taskText.classList.remove('completed');
         }
+    }
+</script>
 
-        // Сохранение состояния чекбоксов
-        function saveCheckboxState(checkboxId) {
-            const checkbox = document.getElementById(checkboxId);
-            const state = checkbox.checked;
-            localStorage.setItem(checkboxId, state);
-            updateCheckboxStyle(checkbox, state);
-        }
-
-        // Обновление стиля чекбокса
-        function updateCheckboxStyle(checkbox, state) {
-            if (state) {
-                checkbox.parentElement.classList.add("strikethrough");
-            } else {
-                checkbox.parentElement.classList.remove("strikethrough");
-            }
-        }
-
-        // Загрузка состояния чекбоксов
-        function loadCheckboxState(checkboxId) {
-            const state = localStorage.getItem(checkboxId) === 'true';
-            const checkbox = document.getElementById(checkboxId);
-            checkbox.checked = state;
-            updateCheckboxStyle(checkbox, state);
-        }
-
-        // Загрузка состояния чекбоксов при загрузке страницы
-        document.addEventListener("DOMContentLoaded", () => {
-            loadCheckboxState("checkMeeting");
-            loadCheckboxState("checkTicket");
-            loadCheckboxState("checkSDEK");
-            loadCheckboxState("checkPacking");
-            loadCheckboxState("checkTicketFromVN");
-            loadCheckboxState("checkBuySuitcase");
-            startCountdowns();
-        });
-    </script>
 </body>
 </html>
