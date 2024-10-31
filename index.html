@@ -15,23 +15,53 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+            padding: 0;
         }
         .countdown {
             text-align: center;
             margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #1a1a1a;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+            width: 90%;
+            max-width: 500px;
         }
         .title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: bold;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3);
         }
         .time {
-            font-size: 2rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
+            color: #00ffcc;
         }
         .small-countdown .title {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
         .small-countdown .time {
-            font-size: 1.5rem;
+            font-size: 2rem;
+            color: #ffcc00;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+        .strikethrough {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -45,10 +75,13 @@
     <div class="countdown small-countdown">
         <div class="title">До покупки билетов:</div>
         <div id="countdown2" class="time">5 дней</div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="checkPurchase" class="checkbox">
+            <label for="checkPurchase">Задача выполнена</label>
+        </div>
     </div>
 
     <script>
-        // Устанавливаем дату окончания для первого отсчета
         const endDate1 = new Date('November 30, 2024 23:59:59').getTime();
 
         function updateCountdown(endDate, elementId) {
@@ -70,10 +103,22 @@
             }
         }
 
-        // Запускаем таймер для первого отсчета
         const countdownIntervals = {
             countdown1: setInterval(() => updateCountdown(endDate1, 'countdown1'), 1000),
         };
+
+        const checkPurchase = document.getElementById('checkPurchase');
+        const countdown2 = document.getElementById('countdown2');
+
+        checkPurchase.addEventListener('change', () => {
+            if (checkPurchase.checked) {
+                countdown2.classList.add('strikethrough');
+                countdown2.innerHTML = 'Задача выполнена';
+            } else {
+                countdown2.classList.remove('strikethrough');
+                countdown2.innerHTML = '5 дней';
+            }
+        });
     </script>
 
 </body>
