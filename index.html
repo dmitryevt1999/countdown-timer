@@ -28,25 +28,25 @@
             max-width: 500px;
         }
         .title {
-            font-size: 2.5rem; /* Увеличен размер шрифта для основного отсчета */
+            font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 10px;
             text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3);
         }
         .time {
-            font-size: 3rem; /* Увеличен размер шрифта для основного отсчета */
+            font-size: 3rem;
             font-weight: bold;
             text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
             color: #00ffcc;
         }
         .subtask {
-            font-size: 1.2rem; /* Уменьшен размер шрифта для подзадач */
-            color: #ccc; /* Менее яркий цвет для подзадач */
+            font-size: 1.2rem;
+            color: #ccc;
             margin-top: 10px;
         }
         .subtask-time {
-            font-size: 2rem; /* Размер шрифта для времени подзадачи */
-            color: #00ccff; /* Цвет времени подзадачи */
+            font-size: 1.5rem;
+            color: #00ccff;
         }
         .strikethrough {
             text-decoration: line-through;
@@ -57,13 +57,13 @@
             align-items: center;
             justify-content: center;
             margin-top: 5px;
-            font-size: 1rem; /* Уменьшен размер шрифта для чекбокса */
+            font-size: 1rem;
         }
         .checkbox {
-            width: 15px; /* Уменьшен размер чекбокса */
+            width: 15px;
             height: 15px;
             margin-right: 5px;
-            accent-color: #ffcc00; /* Цвет галочки */
+            accent-color: #ffcc00;
         }
     </style>
 </head>
@@ -71,21 +71,42 @@
 
     <div class="countdown">
         <div class="title">До встречи осталось:</div>
-        <div id="countdown1" class="time">Загрузка...</div>
+        <div id="countdownMain" class="time">Загрузка...</div>
     </div>
 
     <div class="countdown">
-        <div class="subtask">До покупки билетов:</div>
-        <div id="countdown2" class="subtask-time">Загрузка...</div>
+        <div class="subtask">До покупки билетов в Питер:</div>
+        <div id="countdownTicket" class="subtask-time">Загрузка...</div>
         <div class="checkbox-container">
-            <input type="checkbox" id="checkPurchase" class="checkbox">
-            <label for="checkPurchase">Задача выполнена</label>
+            <input type="checkbox" id="checkTicket" class="checkbox">
+            <label for="checkTicket">Задача выполнена</label>
+        </div>
+    </div>
+
+    <div class="countdown">
+        <div class="subtask">До завершения отправки СДЭКом:</div>
+        <div id="countdownSDEK" class="subtask-time">Загрузка...</div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="checkSDEK" class="checkbox">
+            <label for="checkSDEK">Задача выполнена</label>
+        </div>
+    </div>
+
+    <div class="countdown">
+        <div class="subtask">До подзадачи на 28 ноября:</div>
+        <div id="countdownSubtask" class="subtask-time">Загрузка...</div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="checkSubtask" class="checkbox">
+            <label for="checkSubtask">Задача выполнена</label>
         </div>
     </div>
 
     <script>
-        const endDate1 = new Date('November 30, 2024 23:59:59').getTime(); // Дата окончания для первого отсчета
-        const endDate2 = new Date('November 5, 2024 23:59:59').getTime(); // Дата окончания для второго отсчета
+        // Установим даты завершения для каждого таймера
+        const endDateMain = new Date('November 30, 2024 23:59:59').getTime();
+        const endDateTicket = new Date('November 5, 2024 23:59:59').getTime();
+        const endDateSDEK = new Date('November 28, 2024 23:59:59').getTime();
+        const endDateSubtask = new Date('November 28, 2024 23:59:59').getTime();
 
         function updateCountdown(endDate, elementId) {
             const now = new Date().getTime();
@@ -106,23 +127,25 @@
             }
         }
 
+        // Обновляем таймеры каждую секунду
         const countdownIntervals = {
-            countdown1: setInterval(() => updateCountdown(endDate1, 'countdown1'), 1000),
-            countdown2: setInterval(() => updateCountdown(endDate2, 'countdown2'), 1000),
+            countdownMain: setInterval(() => updateCountdown(endDateMain, 'countdownMain'), 1000),
+            countdownTicket: setInterval(() => updateCountdown(endDateTicket, 'countdownTicket'), 1000),
+            countdownSDEK: setInterval(() => updateCountdown(endDateSDEK, 'countdownSDEK'), 1000),
+            countdownSubtask: setInterval(() => updateCountdown(endDateSubtask, 'countdownSubtask'), 1000)
         };
 
-        const checkPurchase = document.getElementById('checkPurchase');
+        // Отмечаем выполнение подзадач и перечеркиваем текст
+        document.getElementById("checkTicket").addEventListener("change", function() {
+            document.getElementById("countdownTicket").classList.toggle("strikethrough", this.checked);
+        });
 
-        checkPurchase.addEventListener('change', () => {
-            if (checkPurchase.checked) {
-                document.getElementById('countdown2').classList.add('strikethrough');
-                document.getElementById('countdown2').innerHTML = 'Задача выполнена';
-                clearInterval(countdownIntervals['countdown2']); // Остановка отсчета при выполнении задачи
-            } else {
-                document.getElementById('countdown2').classList.remove('strikethrough');
-                updateCountdown(endDate2, 'countdown2'); // Обновление отсчета, если галочка снята
-                countdownIntervals['countdown2'] = setInterval(() => updateCountdown(endDate2, 'countdown2'), 1000);
-            }
+        document.getElementById("checkSDEK").addEventListener("change", function() {
+            document.getElementById("countdownSDEK").classList.toggle("strikethrough", this.checked);
+        });
+
+        document.getElementById("checkSubtask").addEventListener("change", function() {
+            document.getElementById("countdownSubtask").classList.toggle("strikethrough", this.checked);
         });
     </script>
 
