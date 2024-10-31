@@ -6,7 +6,7 @@
     <title>Countdown Timer</title>
     <style>
         body {
-            background-color: black;
+            background-color: #121212; /* Темный фон */
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -15,18 +15,27 @@
         h1 {
             font-size: 36px;
             color: #FFD700; /* Золотистый цвет для главной задачи */
+            margin-bottom: 20px;
         }
         .countdown {
-            font-size: 24px;
+            font-size: 28px;
             margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255, 215, 0, 0.2); /* Полупрозрачный фон для таймеров */
+            display: inline-block;
         }
         .task {
-            margin: 10px 0;
-            font-size: 20px; /* Уменьшение шрифта подзадач */
+            margin: 15px 0;
+            font-size: 22px; /* Уменьшение шрифта подзадач */
             color: lightgray; /* Более светлый цвет для подзадач */
+            display: flex;
+            align-items: center; /* Центрирование содержимого */
+            justify-content: center; /* Центрирование содержимого */
         }
         .checkbox {
             margin-right: 10px;
+            cursor: pointer; /* Курсор как указатель */
         }
         .completed {
             text-decoration: line-through;
@@ -34,6 +43,25 @@
         }
         .highlight {
             color: #FFD700; /* Золотистый цвет для главной задачи */
+        }
+        /* Добавление стилей для активного состояния чекбокса */
+        input[type="checkbox"]:checked {
+            accent-color: #FFD700; /* Цвет чекбокса при активном состоянии */
+        }
+        /* Анимация для таймеров */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .countdown {
+            animation: pulse 1s infinite; /* Пульсация таймеров */
         }
     </style>
 </head>
@@ -45,24 +73,24 @@
 <h2 class="highlight">Главная задача</h2>
 
 <div class="task">
-    <div id="countdown-2" class="countdown"></div>
     <input type="checkbox" class="checkbox" id="task-1" onchange="toggleTask(this, 'task-1-text', 'countdown-2')">
     <span id="task-1-text">Отправка СДЭК до 29 ноября</span>
+    <div id="countdown-2" class="countdown"></div>
 </div>
 <div class="task">
-    <div id="countdown-3" class="countdown"></div>
     <input type="checkbox" class="checkbox" id="task-2" onchange="toggleTask(this, 'task-2-text', 'countdown-3')">
     <span id="task-2-text">Сбор вещей до 28 ноября</span>
+    <div id="countdown-3" class="countdown"></div>
 </div>
 <div class="task">
-    <div id="countdown-4" class="countdown"></div>
     <input type="checkbox" class="checkbox" id="task-3" onchange="toggleTask(this, 'task-3-text', 'countdown-4')">
     <span id="task-3-text">Покупка билета до 5 ноября</span>
+    <div id="countdown-4" class="countdown"></div>
 </div>
 <div class="task">
-    <div id="countdown-5" class="countdown"></div>
     <input type="checkbox" class="checkbox" id="task-4" onchange="toggleTask(this, 'task-4-text', 'countdown-5')">
     <span id="task-4-text">Купить чемодан до 3 ноября</span>
+    <div id="countdown-5" class="countdown"></div>
 </div>
 
 <script>
@@ -80,7 +108,7 @@
         checkboxes.forEach(checkbox => {
             const checked = localStorage.getItem(checkbox.id) === 'true';
             checkbox.checked = checked;
-            toggleTask(checkbox, checkbox.nextElementSibling.id, checkbox.parentElement.firstElementChild.id);
+            toggleTask(checkbox, checkbox.nextElementSibling.id, checkbox.parentElement.lastElementChild.id);
         });
     }
 
