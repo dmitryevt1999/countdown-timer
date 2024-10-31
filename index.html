@@ -12,12 +12,18 @@
             text-align: center;
             padding: 20px;
         }
+        h1 {
+            font-size: 36px;
+            color: #FFD700; /* Золотистый цвет для главной задачи */
+        }
         .countdown {
             font-size: 24px;
             margin: 20px 0;
         }
         .task {
             margin: 10px 0;
+            font-size: 20px; /* Уменьшение шрифта подзадач */
+            color: lightgray; /* Более светлый цвет для подзадач */
         }
         .checkbox {
             margin-right: 10px;
@@ -26,6 +32,9 @@
             text-decoration: line-through;
             color: gray;
         }
+        .highlight {
+            color: #FFD700; /* Золотистый цвет для главной задачи */
+        }
     </style>
 </head>
 <body>
@@ -33,7 +42,8 @@
 <h1>Отсчет до встречи</h1>
 <div id="countdown-1" class="countdown"></div>
 
-<h2>Подзадачи</h2>
+<h2 class="highlight">Главная задача</h2>
+
 <div class="task">
     <div id="countdown-2" class="countdown"></div>
     <input type="checkbox" class="checkbox" id="task-1" onchange="toggleTask(this, 'task-1-text', 'countdown-2')">
@@ -56,6 +66,24 @@
 </div>
 
 <script>
+    // Сохранение состояния чекбоксов в локальном хранилище
+    function saveCheckboxState() {
+        const checkboxes = document.querySelectorAll('.checkbox');
+        checkboxes.forEach(checkbox => {
+            localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+    }
+
+    // Восстановление состояния чекбоксов из локального хранилища
+    function loadCheckboxState() {
+        const checkboxes = document.querySelectorAll('.checkbox');
+        checkboxes.forEach(checkbox => {
+            const checked = localStorage.getItem(checkbox.id) === 'true';
+            checkbox.checked = checked;
+            toggleTask(checkbox, checkbox.nextElementSibling.id, checkbox.parentElement.firstElementChild.id);
+        });
+    }
+
     // Функция для вычисления времени до события
     function calculateCountdown(endTime, elementId) {
         const now = new Date().getTime();
@@ -103,7 +131,11 @@
             countdownText.classList.remove('completed');
             countdownText.innerHTML = ""; // Очищаем текст при снятии галочки
         }
+        saveCheckboxState(); // Сохраняем состояние чекбоксов
     }
+
+    // Загружаем состояние чекбоксов при загрузке страницы
+    window.onload = loadCheckboxState;
 </script>
 
 </body>
