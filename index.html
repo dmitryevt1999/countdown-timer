@@ -84,7 +84,7 @@
     </div>
 
     <div class="countdown">
-        <div class="subtask">До завершения отправки СДЭКом:</div>
+        <div class="subtask">Отправка СДЭКом:</div>
         <div id="countdownSDEK" class="subtask-time">Загрузка...</div>
         <div class="checkbox-container">
             <input type="checkbox" id="checkSDEK" class="checkbox">
@@ -93,7 +93,7 @@
     </div>
 
     <div class="countdown">
-        <div class="subtask">До подзадачи на 28 ноября:</div>
+        <div class="subtask">Билет из Великого Новгорода в Питер:</div>
         <div id="countdownSubtask" class="subtask-time">Загрузка...</div>
         <div class="checkbox-container">
             <input type="checkbox" id="checkSubtask" class="checkbox">
@@ -102,7 +102,6 @@
     </div>
 
     <script>
-        // Установим даты завершения для каждого таймера
         const endDateMain = new Date('November 30, 2024 23:59:59').getTime();
         const endDateTicket = new Date('November 5, 2024 23:59:59').getTime();
         const endDateSDEK = new Date('November 28, 2024 23:59:59').getTime();
@@ -127,7 +126,7 @@
             }
         }
 
-        // Обновляем таймеры каждую секунду
+        // Запуск таймеров
         const countdownIntervals = {
             countdownMain: setInterval(() => updateCountdown(endDateMain, 'countdownMain'), 1000),
             countdownTicket: setInterval(() => updateCountdown(endDateTicket, 'countdownTicket'), 1000),
@@ -135,17 +134,40 @@
             countdownSubtask: setInterval(() => updateCountdown(endDateSubtask, 'countdownSubtask'), 1000)
         };
 
-        // Отмечаем выполнение подзадач и перечеркиваем текст
+        // Сохранение состояния чекбоксов в Local Storage
+        function saveCheckboxState(id) {
+            const checkbox = document.getElementById(id);
+            localStorage.setItem(id, checkbox.checked);
+        }
+
+        function loadCheckboxState(id, elementId) {
+            const isChecked = localStorage.getItem(id) === "true";
+            const checkbox = document.getElementById(id);
+            checkbox.checked = isChecked;
+            document.getElementById(elementId).classList.toggle("strikethrough", isChecked);
+        }
+
+        // Загрузка состояния при загрузке страницы
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCheckboxState("checkTicket", "countdownTicket");
+            loadCheckboxState("checkSDEK", "countdownSDEK");
+            loadCheckboxState("checkSubtask", "countdownSubtask");
+        });
+
+        // События для чекбоксов
         document.getElementById("checkTicket").addEventListener("change", function() {
             document.getElementById("countdownTicket").classList.toggle("strikethrough", this.checked);
+            saveCheckboxState("checkTicket");
         });
 
         document.getElementById("checkSDEK").addEventListener("change", function() {
             document.getElementById("countdownSDEK").classList.toggle("strikethrough", this.checked);
+            saveCheckboxState("checkSDEK");
         });
 
         document.getElementById("checkSubtask").addEventListener("change", function() {
             document.getElementById("countdownSubtask").classList.toggle("strikethrough", this.checked);
+            saveCheckboxState("checkSubtask");
         });
     </script>
 
