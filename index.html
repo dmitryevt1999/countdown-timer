@@ -47,22 +47,34 @@
     <div class="countdown" id="countdownSDEK">00:00:00</div>
     <input type="checkbox" id="checkSDEK" onchange="saveCheckboxState('checkSDEK')"> Завершено
 
-    <h1 class="subtask">Подзадача: Билет из Великого Новгорода в Питер:</h1>
+    <h1 class="subtask">Подзадача: Сбор вещей:</h1>
+    <div class="countdown" id="countdownPacking">00:00:00</div>
+    <input type="checkbox" id="checkPacking" onchange="saveCheckboxState('checkPacking')"> Завершено
+
+    <h1 class="subtask">Подзадача: Купить билет в Питер:</h1>
     <div class="countdown" id="countdownTicketFromVN">00:00:00</div>
     <input type="checkbox" id="checkTicketFromVN" onchange="saveCheckboxState('checkTicketFromVN')"> Завершено
+
+    <h1 class="subtask">Подзадача: Купить чемодан:</h1>
+    <div class="countdown" id="countdownBuySuitcase">00:00:00</div>
+    <input type="checkbox" id="checkBuySuitcase" onchange="saveCheckboxState('checkBuySuitcase')"> Завершено
 
     <script>
         // Функция запуска отсчетов
         function startCountdowns() {
             const meetingDate = new Date("2024-11-30T00:00:00").getTime();
             const ticketDate = new Date("2024-11-05T00:00:00").getTime();
-            const sdekDate = new Date("2024-11-28T00:00:00").getTime();
+            const sdekDate = new Date("2024-11-29T00:00:00").getTime();
+            const packingDate = new Date("2024-11-28T00:00:00").getTime();
             const ticketFromVNDate = new Date("2024-11-10T00:00:00").getTime(); // Примерная дата
+            const buySuitcaseDate = new Date("2024-11-02T00:00:00").getTime(); // Примерная дата
 
             setInterval(() => updateCountdown(meetingDate, "countdownMeeting"), 1000);
             setInterval(() => updateCountdown(ticketDate, "countdownTicket"), 1000);
             setInterval(() => updateCountdown(sdekDate, "countdownSDEK"), 1000);
+            setInterval(() => updateCountdown(packingDate, "countdownPacking"), 1000);
             setInterval(() => updateCountdown(ticketFromVNDate, "countdownTicketFromVN"), 1000);
+            setInterval(() => updateCountdown(buySuitcaseDate, "countdownBuySuitcase"), 1000);
         }
 
         // Обновление отсчета
@@ -70,15 +82,16 @@
             const now = new Date().getTime();
             const distance = targetDate - now;
 
+            if (distance < 0) {
+                document.getElementById(elementId).innerHTML = "Время вышло";
+                return;
+            }
+
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             document.getElementById(elementId).innerHTML = `${hours}ч ${minutes}м ${seconds}с`;
-
-            if (distance < 0) {
-                document.getElementById(elementId).innerHTML = "Время вышло";
-            }
         }
 
         // Сохранение состояния чекбоксов
@@ -86,6 +99,11 @@
             const checkbox = document.getElementById(checkboxId);
             const state = checkbox.checked;
             localStorage.setItem(checkboxId, state);
+            updateCheckboxStyle(checkbox, state);
+        }
+
+        // Обновление стиля чекбокса
+        function updateCheckboxStyle(checkbox, state) {
             if (state) {
                 checkbox.parentElement.classList.add("strikethrough");
             } else {
@@ -98,9 +116,7 @@
             const state = localStorage.getItem(checkboxId) === 'true';
             const checkbox = document.getElementById(checkboxId);
             checkbox.checked = state;
-            if (state) {
-                checkbox.parentElement.classList.add("strikethrough");
-            }
+            updateCheckboxStyle(checkbox, state);
         }
 
         // Загрузка состояния чекбоксов при загрузке страницы
@@ -108,7 +124,9 @@
             loadCheckboxState("checkMeeting");
             loadCheckboxState("checkTicket");
             loadCheckboxState("checkSDEK");
+            loadCheckboxState("checkPacking");
             loadCheckboxState("checkTicketFromVN");
+            loadCheckboxState("checkBuySuitcase");
             startCountdowns();
         });
     </script>
