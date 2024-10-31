@@ -35,24 +35,24 @@
 
 <h2>Подзадачи</h2>
 <div class="task">
-    <input type="checkbox" class="checkbox" id="task-1" onchange="toggleTask(this, 'task-1-text')">
-    <span id="task-1-text">Отправка СДЭК до 29 ноября</span>
     <div id="countdown-2" class="countdown"></div>
+    <input type="checkbox" class="checkbox" id="task-1" onchange="toggleTask(this, 'task-1-text', 'countdown-2')">
+    <span id="task-1-text">Отправка СДЭК до 29 ноября</span>
 </div>
 <div class="task">
-    <input type="checkbox" class="checkbox" id="task-2" onchange="toggleTask(this, 'task-2-text')">
-    <span id="task-2-text">Сбор вещей до 28 ноября</span>
     <div id="countdown-3" class="countdown"></div>
+    <input type="checkbox" class="checkbox" id="task-2" onchange="toggleTask(this, 'task-2-text', 'countdown-3')">
+    <span id="task-2-text">Сбор вещей до 28 ноября</span>
 </div>
 <div class="task">
-    <input type="checkbox" class="checkbox" id="task-3" onchange="toggleTask(this, 'task-3-text')">
-    <span id="task-3-text">Покупка билета до 5 ноября</span>
     <div id="countdown-4" class="countdown"></div>
+    <input type="checkbox" class="checkbox" id="task-3" onchange="toggleTask(this, 'task-3-text', 'countdown-4')">
+    <span id="task-3-text">Покупка билета до 5 ноября</span>
 </div>
 <div class="task">
-    <input type="checkbox" class="checkbox" id="task-4" onchange="toggleTask(this, 'task-4-text')">
-    <span id="task-4-text">Купить чемодан до 3 ноября</span>
     <div id="countdown-5" class="countdown"></div>
+    <input type="checkbox" class="checkbox" id="task-4" onchange="toggleTask(this, 'task-4-text', 'countdown-5')">
+    <span id="task-4-text">Купить чемодан до 3 ноября</span>
 </div>
 
 <script>
@@ -77,7 +77,6 @@
 
     // Обновление таймера
     setInterval(() => {
-        const now = new Date();
         const endTime1 = new Date("2024-11-30T00:00:00").getTime();
         const endTime2 = new Date("2024-11-05T00:00:00").getTime();
         const endTime3 = new Date("2024-11-29T00:00:00").getTime();
@@ -92,12 +91,17 @@
     }, 1000);
 
     // Функция для обработки завершения задачи
-    function toggleTask(checkbox, taskId) {
+    function toggleTask(checkbox, taskId, countdownId) {
         const taskText = document.getElementById(taskId);
+        const countdownText = document.getElementById(countdownId);
         if (checkbox.checked) {
             taskText.classList.add('completed');
+            countdownText.classList.add('completed');
+            countdownText.innerHTML = "Задача выполнена!";
         } else {
             taskText.classList.remove('completed');
+            countdownText.classList.remove('completed');
+            countdownText.innerHTML = ""; // Очищаем текст при снятии галочки
         }
     }
 </script>
