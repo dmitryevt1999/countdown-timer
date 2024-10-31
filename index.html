@@ -6,180 +6,130 @@
     <title>Countdown Timer</title>
     <style>
         body {
-            background-color: #121212; /* Темный фон */
-            color: white;
+            background-color: #000;
+            color: #fff;
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 36px;
-            color: #FFD700; /* Золотистый цвет для главной задачи */
-            margin-bottom: 20px;
-        }
-        .countdown {
-            font-size: 28px;
-            margin: 20px 0;
-            padding: 10px;
-            border-radius: 5px;
-            background: rgba(255, 215, 0, 0.2); /* Полупрозрачный фон для таймеров */
-            display: inline-block;
         }
         .task {
-            margin: 15px 0;
-            font-size: 22px; /* Уменьшение шрифта подзадач */
-            color: lightgray; /* Более светлый цвет для подзадач */
-            display: flex;
-            align-items: center; /* Центрирование содержимого */
-            justify-content: center; /* Центрирование содержимого */
+            font-size: 24px;
+            margin: 20px 0;
         }
-        .checkbox {
-            margin-right: 10px;
-            cursor: pointer; /* Курсор как указатель */
+        .subtask {
+            font-size: 18px;
+            margin: 10px 0;
+            opacity: 0.8;
         }
         .completed {
             text-decoration: line-through;
             color: gray;
         }
-        .highlight {
-            color: #FFD700; /* Золотистый цвет для главной задачи */
+        .timer {
+            font-size: 30px;
+            margin: 10px 0;
         }
-        /* Добавление стилей для активного состояния чекбокса */
-        input[type="checkbox"]:checked {
-            accent-color: #FFD700; /* Цвет чекбокса при активном состоянии */
-        }
-        /* Анимация для таймеров */
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        .countdown {
-            animation: pulse 1s infinite; /* Пульсация таймеров */
-        }
-        /* Добавляем отступы между чекбоксом и таймером */
-        .task .countdown {
-            margin-top: 10px; /* Отступ между таймером и задачей */
+        .checkbox {
+            margin-bottom: 30px; /* Увеличенный отступ между чекбоксами и таймерами */
         }
     </style>
 </head>
 <body>
 
-<h1>Отсчет до встречи</h1>
-<div id="countdown-1" class="countdown"></div>
+    <div class="task">
+        Основной таймер до 30 ноября:
+        <div class="timer" id="main-timer"></div>
+        <input type="checkbox" class="checkbox" id="main-task-checkbox">
+    </div>
 
-<h2 class="highlight">Главная задача</h2>
+    <div class="subtask">
+        Подзадача: Покупка билета до 5 ноября:
+        <div class="timer" id="subtimer1"></div>
+        <input type="checkbox" class="checkbox" id="subtask1-checkbox">
+    </div>
 
-<div class="task">
-    <input type="checkbox" class="checkbox" id="task-1" onchange="toggleTask(this, 'task-1-text', 'countdown-2')">
-    <span id="task-1-text">Отправка СДЭК до 29 ноября</span>
-    <div id="countdown-2" class="countdown"></div>
-</div>
-<div class="task">
-    <input type="checkbox" class="checkbox" id="task-2" onchange="toggleTask(this, 'task-2-text', 'countdown-3')">
-    <span id="task-2-text">Сбор вещей до 28 ноября</span>
-    <div id="countdown-3" class="countdown"></div>
-</div>
-<div class="task">
-    <input type="checkbox" class="checkbox" id="task-3" onchange="toggleTask(this, 'task-3-text', 'countdown-4')">
-    <span id="task-3-text">Покупка билета до 5 ноября</span>
-    <div id="countdown-4" class="countdown"></div>
-</div>
-<div class="task">
-    <input type="checkbox" class="checkbox" id="task-4" onchange="toggleTask(this, 'task-4-text', 'countdown-5')">
-    <span id="task-4-text">Купить чемодан до 3 ноября</span>
-    <div id="countdown-5" class="countdown"></div>
-</div>
+    <div class="subtask">
+        Подзадача: Отправка СДЭК до 28 ноября:
+        <div class="timer" id="subtimer2"></div>
+        <input type="checkbox" class="checkbox" id="subtask2-checkbox">
+    </div>
 
-<script>
-    // Сохранение состояния чекбоксов в локальном хранилище
-    function saveCheckboxState() {
-        const checkboxes = document.querySelectorAll('.checkbox');
-        checkboxes.forEach(checkbox => {
-            localStorage.setItem(checkbox.id, checkbox.checked);
-        });
-    }
+    <div class="subtask">
+        Подзадача: Сбор вещей до 28 ноября:
+        <div class="timer" id="subtimer3"></div>
+        <input type="checkbox" class="checkbox" id="subtask3-checkbox">
+    </div>
 
-    // Восстановление состояния чекбоксов из локального хранилища
-    function loadCheckboxState() {
-        const checkboxes = document.querySelectorAll('.checkbox');
-        checkboxes.forEach(checkbox => {
-            const checked = localStorage.getItem(checkbox.id) === 'true';
-            checkbox.checked = checked;
-            toggleTask(checkbox, checkbox.nextElementSibling.id, checkbox.parentElement.lastElementChild.id);
-        });
-    }
+    <div class="subtask">
+        Подзадача: Покупка чемодана до 3 ноября:
+        <div class="timer" id="subtimer4"></div>
+        <input type="checkbox" class="checkbox" id="subtask4-checkbox">
+    </div>
 
-    // Функция для вычисления времени до события
-    function calculateCountdown(endTime, elementId, completed) {
-        const now = new Date().getTime();
-        const distance = endTime - now;
+    <script>
+        // Функция для установки таймеров
+        function startTimer(targetDate, elementId, checkboxId) {
+            const timerElement = document.getElementById(elementId);
+            const checkbox = document.getElementById(checkboxId);
+            
+            // Восстановление состояния чекбокса из локального хранилища
+            checkbox.checked = localStorage.getItem(checkboxId) === 'true';
+            if (checkbox.checked) {
+                timerElement.classList.add('completed');
+            }
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            // Обновление таймера
+            function updateTimer() {
+                if (checkbox.checked) {
+                    return; // Если чекбокс выбран, таймер не обновляется
+                }
 
-        const countdownElement = document.getElementById(elementId);
-        if (completed) {
-            countdownElement.innerHTML = "Задача выполнена!";
-        } else if (distance < 0) {
-            countdownElement.innerHTML = "Время вышло!";
-        } else {
-            countdownElement.innerHTML = days + " дней " + hours + " часов "
-                + minutes + " минут " + seconds + " секунд ";
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    timerElement.innerHTML = "Время истекло!";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            // Сохранение состояния чекбокса в локальное хранилище
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(checkboxId, checkbox.checked);
+                if (checkbox.checked) {
+                    timerElement.classList.add('completed');
+                } else {
+                    timerElement.classList.remove('completed');
+                }
+            });
+
+            const interval = setInterval(updateTimer, 1000);
+            updateTimer(); // Запуск таймера
         }
-    }
 
-    // Обновление таймера
-    setInterval(() => {
-        const endTime1 = new Date("2024-11-30T00:00:00").getTime();
-        const endTime2 = new Date("2024-11-29T00:00:00").getTime(); // Отправка СДЭК
-        const endTime3 = new Date("2024-11-28T00:00:00").getTime(); // Сбор вещей
-        const endTime4 = new Date("2024-11-05T00:00:00").getTime(); // Покупка билета
-        const endTime5 = new Date("2024-11-03T00:00:00").getTime(); // Купить чемодан
+        // Установка целевых дат для таймеров
+        const mainTargetDate = new Date("November 30, 2024 00:00:00").getTime();
+        startTimer(mainTargetDate, "main-timer", "main-task-checkbox");
 
-        const completedTasks = [
-            localStorage.getItem("task-1") === 'true',
-            localStorage.getItem("task-2") === 'true',
-            localStorage.getItem("task-3") === 'true',
-            localStorage.getItem("task-4") === 'true',
-        ];
+        const subTargetDate1 = new Date("November 5, 2024 00:00:00").getTime();
+        startTimer(subTargetDate1, "subtimer1", "subtask1-checkbox");
 
-        calculateCountdown(endTime1, "countdown-1", false);
-        calculateCountdown(endTime2, "countdown-2", completedTasks[0]);
-        calculateCountdown(endTime3, "countdown-3", completedTasks[1]);
-        calculateCountdown(endTime4, "countdown-4", completedTasks[2]);
-        calculateCountdown(endTime5, "countdown-5", completedTasks[3]);
-    }, 1000);
+        const subTargetDate2 = new Date("November 28, 2024 00:00:00").getTime();
+        startTimer(subTargetDate2, "subtimer2", "subtask2-checkbox");
 
-    // Функция для обработки завершения задачи
-    function toggleTask(checkbox, taskId, countdownId) {
-        const taskText = document.getElementById(taskId);
-        const countdownText = document.getElementById(countdownId);
-        if (checkbox.checked) {
-            taskText.classList.add('completed');
-            countdownText.classList.add('completed');
-            countdownText.innerHTML = "Задача выполнена!";
-            localStorage.setItem(checkbox.id, 'true'); // Сохранение состояния в локальное хранилище
-        } else {
-            taskText.classList.remove('completed');
-            countdownText.classList.remove('completed');
-            countdownText.innerHTML = ""; // Очищаем текст при снятии галочки
-            localStorage.setItem(checkbox.id, 'false'); // Обновление состояния в локальном хранилище
-        }
-        saveCheckboxState(); // Сохраняем состояние чекбоксов
-    }
+        const subTargetDate3 = new Date("November 28, 2024 00:00:00").getTime();
+        startTimer(subTargetDate3, "subtimer3", "subtask3-checkbox");
 
-    // Загружаем состояние чекбоксов при загрузке страницы
-    window.onload = loadCheckboxState;
-</script>
+        const subTargetDate4 = new Date("November 3, 2024 00:00:00").getTime();
+        startTimer(subTargetDate4, "subtimer4", "subtask4-checkbox");
 
+    </script>
 </body>
 </html>
