@@ -88,7 +88,7 @@
 </div>
 <div class="task">
     <input type="checkbox" class="checkbox" id="task-3" onchange="toggleTask(this, 'task-3-text', 'countdown-4')">
-    <span id="task-3-text">Покупка билета до 5 ноября</span> <!-- Изменение здесь -->
+    <span id="task-3-text">Покупка билета до 5 ноября</span>
     <div id="countdown-4" class="countdown"></div>
 </div>
 <div class="task">
@@ -140,10 +140,10 @@
     // Обновление таймера
     setInterval(() => {
         const endTime1 = new Date("2024-11-30T00:00:00").getTime();
-        const endTime2 = new Date("2024-11-05T00:00:00").getTime();
-        const endTime3 = new Date("2024-11-29T00:00:00").getTime();
-        const endTime4 = new Date("2024-11-28T00:00:00").getTime();
-        const endTime5 = new Date("2024-11-03T00:00:00").getTime();
+        const endTime2 = new Date("2024-11-29T00:00:00").getTime(); // Отправка СДЭК
+        const endTime3 = new Date("2024-11-28T00:00:00").getTime(); // Сбор вещей
+        const endTime4 = new Date("2024-11-05T00:00:00").getTime(); // Покупка билета
+        const endTime5 = new Date("2024-11-03T00:00:00").getTime(); // Купить чемодан
 
         const completedTasks = [
             localStorage.getItem("task-1") === 'true',
