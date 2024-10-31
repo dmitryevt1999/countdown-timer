@@ -44,13 +44,12 @@
 
     <div class="countdown small-countdown">
         <div class="title">До покупки билетов:</div>
-        <div id="countdown2" class="time">Загрузка...</div>
+        <div id="countdown2" class="time">5 дней</div>
     </div>
 
     <script>
-        // Устанавливаем даты окончания
+        // Устанавливаем дату окончания для первого отсчета
         const endDate1 = new Date('November 30, 2024 23:59:59').getTime();
-        const endDate2 = new Date('November 5, 2024 23:59:59').getTime();
 
         function updateCountdown(endDate, elementId) {
             const now = new Date().getTime();
@@ -71,10 +70,9 @@
             }
         }
 
-        // Запускаем два таймера для каждого отсчета
+        // Запускаем таймер для первого отсчета
         const countdownIntervals = {
             countdown1: setInterval(() => updateCountdown(endDate1, 'countdown1'), 1000),
-            countdown2: setInterval(() => updateCountdown(endDate2, 'countdown2'), 1000),
         };
     </script>
 
