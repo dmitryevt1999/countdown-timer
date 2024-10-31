@@ -3,173 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обратный отсчет</title>
+    <title>Countdown Timer</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js"></script>
     <style>
         body {
+            background-color: black;
+            color: white;
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
         }
         .countdown {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #1a1a1a;
-            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
-            width: 90%;
-            max-width: 500px;
-        }
-        .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3);
-        }
-        .time {
-            font-size: 3rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
-            color: #00ffcc;
-        }
-        .subtask {
-            font-size: 1.2rem;
-            color: #ccc;
-            margin-top: 10px;
-        }
-        .subtask-time {
-            font-size: 1.5rem;
-            color: #00ccff;
+            font-size: 24px;
         }
         .strikethrough {
             text-decoration: line-through;
-            color: #888;
+            color: gray;
         }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 5px;
-            font-size: 1rem;
+        .task {
+            font-size: 18px;
         }
-        .checkbox {
-            width: 15px;
-            height: 15px;
-            margin-right: 5px;
-            accent-color: #ffcc00;
+        .subtask {
+            font-size: 14px;
+            color: lightgray;
         }
     </style>
 </head>
 <body>
+    <h1>Отсчет до встречи:</h1>
+    <div class="countdown" id="countdownMeeting">00:00:00</div>
+    <input type="checkbox" id="checkMeeting" onchange="saveCheckboxState('checkMeeting')"> Завершено
 
-    <div class="countdown">
-        <div class="title">До встречи осталось:</div>
-        <div id="countdownMain" class="time">Загрузка...</div>
-    </div>
+    <h1 class="subtask">Подзадача: До покупки билетов осталось:</h1>
+    <div class="countdown" id="countdownTicket">00:00:00</div>
+    <input type="checkbox" id="checkTicket" onchange="saveCheckboxState('checkTicket')"> Завершено
 
-    <div class="countdown">
-        <div class="subtask">До покупки билетов в Питер:</div>
-        <div id="countdownTicket" class="subtask-time">Загрузка...</div>
-        <div class="checkbox-container">
-            <input type="checkbox" id="checkTicket" class="checkbox">
-            <label for="checkTicket">Задача выполнена</label>
-        </div>
-    </div>
-
-    <div class="countdown">
-        <div class="subtask">Отправка СДЭКом:</div>
-        <div id="countdownSDEK" class="subtask-time">Загрузка...</div>
-        <div class="checkbox-container">
-            <input type="checkbox" id="checkSDEK" class="checkbox">
-            <label for="checkSDEK">Задача выполнена</label>
-        </div>
-    </div>
-
-    <div class="countdown">
-        <div class="subtask">Билет из Великого Новгорода в Питер:</div>
-        <div id="countdownSubtask" class="subtask-time">Загрузка...</div>
-        <div class="checkbox-container">
-            <input type="checkbox" id="checkSubtask" class="checkbox">
-            <label for="checkSubtask">Задача выполнена</label>
-        </div>
-    </div>
+    <h1 class="subtask">Подзадача: Отправка SDEK:</h1>
+    <div class="countdown" id="countdownSDEK">00:00:00</div>
+    <input type="checkbox" id="checkSDEK" onchange="saveCheckboxState('checkSDEK')"> Завершено
 
     <script>
-        const endDateMain = new Date('November 30, 2024 23:59:59').getTime();
-        const endDateTicket = new Date('November 5, 2024 23:59:59').getTime();
-        const endDateSDEK = new Date('November 28, 2024 23:59:59').getTime();
-        const endDateSubtask = new Date('November 28, 2024 23:59:59').getTime();
-
-        function updateCountdown(endDate, elementId) {
-            const now = new Date().getTime();
-            const timeRemaining = endDate - now;
-
-            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-            document.getElementById(elementId).innerHTML = `
-                ${days} дн ${hours} ч ${minutes} мин ${seconds} сек
-            `;
-
-            if (timeRemaining < 0) {
-                document.getElementById(elementId).innerHTML = "Время истекло!";
-                clearInterval(countdownIntervals[elementId]);
-            }
-        }
-
-        // Запуск таймеров
-        const countdownIntervals = {
-            countdownMain: setInterval(() => updateCountdown(endDateMain, 'countdownMain'), 1000),
-            countdownTicket: setInterval(() => updateCountdown(endDateTicket, 'countdownTicket'), 1000),
-            countdownSDEK: setInterval(() => updateCountdown(endDateSDEK, 'countdownSDEK'), 1000),
-            countdownSubtask: setInterval(() => updateCountdown(endDateSubtask, 'countdownSubtask'), 1000)
+        // Ваша конфигурация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjNl_Gd32-34qamgfVctFqNSzZa8QbAyM",
+            authDomain: "xrysriki.firebaseapp.com",
+            databaseURL: "https://xrysriki-default-rtdb.firebaseio.com",
+            projectId: "xrysriki",
+            storageBucket: "xrysriki.firebasestorage.app",
+            messagingSenderId: "724701954108",
+            appId: "1:724701954108:web:9c275e4e6806d066df4339",
+            measurementId: "G-FG4NZ3379D"
         };
 
-        // Сохранение состояния чекбоксов в Local Storage
-        function saveCheckboxState(id) {
-            const checkbox = document.getElementById(id);
-            localStorage.setItem(id, checkbox.checked);
-        }
-
-        function loadCheckboxState(id, elementId) {
-            const isChecked = localStorage.getItem(id) === "true";
-            const checkbox = document.getElementById(id);
-            checkbox.checked = isChecked;
-            document.getElementById(elementId).classList.toggle("strikethrough", isChecked);
-        }
+        // Инициализация Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // Загрузка состояния при загрузке страницы
         document.addEventListener("DOMContentLoaded", () => {
-            loadCheckboxState("checkTicket", "countdownTicket");
-            loadCheckboxState("checkSDEK", "countdownSDEK");
-            loadCheckboxState("checkSubtask", "countdownSubtask");
+            loadCheckboxState("checkMeeting");
+            loadCheckboxState("checkTicket");
+            loadCheckboxState("checkSDEK");
+            startCountdowns();
         });
 
-        // События для чекбоксов
-        document.getElementById("checkTicket").addEventListener("change", function() {
-            document.getElementById("countdownTicket").classList.toggle("strikethrough", this.checked);
-            saveCheckboxState("checkTicket");
-        });
+        // Функция запуска отсчетов
+        function startCountdowns() {
+            const meetingDate = new Date("2024-11-30T00:00:00").getTime();
+            const ticketDate = new Date("2024-11-05T00:00:00").getTime();
+            const sdekDate = new Date("2024-11-28T00:00:00").getTime();
 
-        document.getElementById("checkSDEK").addEventListener("change", function() {
-            document.getElementById("countdownSDEK").classList.toggle("strikethrough", this.checked);
-            saveCheckboxState("checkSDEK");
-        });
+            setInterval(() => updateCountdown(meetingDate, "countdownMeeting"), 1000);
+            setInterval(() => updateCountdown(ticketDate, "countdownTicket"), 1000);
+            setInterval(() => updateCountdown(sdekDate, "countdownSDEK"), 1000);
+        }
 
-        document.getElementById("checkSubtask").addEventListener("change", function() {
-            document.getElementById("countdownSubtask").classList.toggle("strikethrough", this.checked);
-            saveCheckboxState("checkSubtask");
-        });
+        // Обновление отсчета
+        function updateCountdown(targetDate, elementId) {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById(elementId).innerHTML = `${hours}ч ${minutes}м ${seconds}с`;
+
+            if (distance < 0) {
+                document.getElementById(elementId).innerHTML = "Время вышло";
+            }
+        }
+
+        // Сохранение состояния чекбоксов в Firebase
+        function saveCheckboxState(id) {
+            const checkbox = document.getElementById(id);
+            database.ref(`checkboxStates/${id}`).set(checkbox.checked);
+            checkbox.classList.toggle("strikethrough", checkbox.checked);
+        }
+
+        // Загрузка состояния чекбокса из Firebase
+        function loadCheckboxState(checkboxId) {
+            database.ref(`checkboxStates/${checkboxId}`).once('value').then((snapshot) => {
+                const checked = snapshot.val() || false; // значение по умолчанию false
+                document.getElementById(checkboxId).checked = checked;
+                document.getElementById(checkboxId).classList.toggle("strikethrough", checked);
+            });
+        }
     </script>
-
 </body>
 </html>
