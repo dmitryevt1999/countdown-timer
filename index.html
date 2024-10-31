@@ -40,9 +40,13 @@
             color: #00ffcc;
         }
         .subtask {
-            font-size: 1.5rem; /* Уменьшен размер шрифта для подзадач */
+            font-size: 1.2rem; /* Уменьшен размер шрифта для подзадач */
             color: #ccc; /* Менее яркий цвет для подзадач */
             margin-top: 10px;
+        }
+        .subtask-time {
+            font-size: 2rem; /* Размер шрифта для времени подзадачи */
+            color: #00ccff; /* Цвет времени подзадачи */
         }
         .strikethrough {
             text-decoration: line-through;
@@ -72,7 +76,7 @@
 
     <div class="countdown">
         <div class="subtask">До покупки билетов:</div>
-        <div id="countdown2" class="time">Загрузка...</div>
+        <div id="countdown2" class="subtask-time">Загрузка...</div>
         <div class="checkbox-container">
             <input type="checkbox" id="checkPurchase" class="checkbox">
             <label for="checkPurchase">Задача выполнена</label>
